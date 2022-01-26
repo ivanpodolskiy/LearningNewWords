@@ -16,14 +16,34 @@ class ViewControllerV1: UIViewController {
         super.viewDidLoad()
     }
     
+    @IBAction func nextWordButton(_ sender: UIButton) {
+        next(dictionary: dictionary)
+    }
     
     //Словарь в котором находятся слова и перевод.
     var  dictionary: [String:String] = ["Кот":"Cat", "Собака":"Dog","Рыба":"Fish"]
-    
+    var dictionaryWrongs: [String: String] = [:]
     //Переменные для временного хранения значения словоря
     var checkValue: String = ""
-    var checkValueSecond: String = ""
     
+    var checkValueSecond: String = ""
+    var countCheck = 0
+    var textInd: [String] = []
+    var counter: Int = 0
+    var countRs: String = ""
+    func dsad(){
+        self.textInd.removeAll()
+        
+        for _ in 1...dictionary.count {
+            
+//        let text: String = "⚪️"
+            self.textInd.append("⚪️")
+            
+        }
+       
+        indicatorLabel.text = textInd.joined(separator:"")
+    }
+   
     
     //Индекаторы
     @IBOutlet weak var indicatorLabel: UILabel!
@@ -47,11 +67,13 @@ class ViewControllerV1: UIViewController {
     
     //Функция для проверки ответа
     func start(One: Dictionary<String, String>){
-        
+        countCheck = 0
+        numIndicator.text = String(counter)
         if dictionary == [:] {
-            resultLabel.text = "Нет слов для проверки"
+            resultLabel.text = "Словарь пуст"
             wordLabel.text = ""
         } else {
+            dsad()
             let index: Int = Int(arc4random_uniform(UInt32(One.count)))
             
             let randomKay = Array(dictionary.keys)[index]
@@ -62,10 +84,7 @@ class ViewControllerV1: UIViewController {
             dictionary[randomKay] = nil
             print (dictionary)
             checkValue = randomVal
-            
         }
-        
-        
     }
     
     @IBOutlet weak var wordLabel: UILabel!
@@ -76,8 +95,9 @@ class ViewControllerV1: UIViewController {
         AudioServicesPlaySystemSound(SystemSoundID(1104))
         if dictionary != [:]{
             maxNumIndicator.text = String(dictionary.count)
-            numIndicator.text = "1"
+            counter = 1
             
+            numIndicator.text = String(counter)
         }
         
         start(One: dictionary)
@@ -94,63 +114,62 @@ class ViewControllerV1: UIViewController {
         self.present(message, animated: .random(), completion: nil)
     }
     
-    
-    //Функция для проверки ответов
-    func check() {
-        if dictionary == [:] || textField.text == "" {
-            wordLabel.text = "No"
-            resultLabel.text = "Слов больше нет"
-            textField.text = ""
-            alert()
-            numIndicator.text = "0"
-            
-        } else if textField.text == checkValue || textField.text == checkValueSecond {
+    func checkNotNext() {
+     
+        if textField.text == "" {
+            resultLabel.text = "Введите перевод"
+        } else if textField.text == checkValue {
             resultLabel.text = "Верно"
             resultLabel.textColor = .green
-            
-            if dictionary == [:]  {
-                wordLabel.text = "No"
-            } else {
-                textField.text = ""
-                print(dictionary)
-                checkValue = ""
-                checkValueSecond = ""
-                let index: Int = Int(arc4random_uniform(UInt32(dictionary.count)))
-                let randomKay = Array(dictionary.keys)[index]
-                let randomVal = Array(dictionary.values)[index]
-                dictionary[randomKay] = nil
-                wordLabel.text = randomKay
-                checkValueSecond = randomVal
-                let test = indicatorLabel.text
-                indicatorLabel.text = "\(test ?? "")🟢"
-                let num: Int = Int(numIndicator.text!)! + 1
-                numIndicator.text = String(num)
-                
-            }
+            textInd[countCheck] = "🟢"
+            indicatorLabel.text = textInd.joined(separator: "")
+            print (dictionary[checkValue])
             
         } else {
             resultLabel.text = "Не верно"
             resultLabel.textColor = .red
+            textInd[countCheck] = "🔴"
+            indicatorLabel.text = textInd.joined(separator: "")
+            
+        }
+    }
+    
+    func next(dictionary: Dictionary<String, String>){
+        resultLabel.text = "Результат"
+        resultLabel.textColor = .black
+        textField.text = ""
+        if dictionary == [:]{
+            resultLabel.text = "Словарь пуст"
+            wordLabel.text = ""
+            counter = 0
+            numIndicator.text = String(counter)
+            maxNumIndicator.text = "0"
+            textInd = []
+            indicatorLabel.text = textInd.joined(separator: "")
+        } else {
+            counter+=1
+            countCheck+=1
+            numIndicator.text =  String(counter)
             checkValue = ""
-            checkValueSecond  = ""
             let index: Int = Int(arc4random_uniform(UInt32(dictionary.count)))
+            
             let randomKay = Array(dictionary.keys)[index]
             let randomVal = Array(dictionary.values)[index]
-            dictionary[randomKay] = nil
+            print (index, randomKay, randomVal)
             wordLabel.text = randomKay
-            checkValueSecond = randomVal
-            let test = indicatorLabel.text
-            indicatorLabel.text = "\(test ?? "")🔴"
-            let num: Int = Int(numIndicator.text!)! + 1
-            numIndicator.text = String(num)
+            
+            self.dictionary[randomKay] = nil
+            print (dictionary)
+            checkValue = randomVal
         }
         
-        
     }
+ 
     
     @IBAction func checkButton(_ sender: Any) {
         AudioServicesPlaySystemSound(SystemSoundID(1104))
-        check()
+//        check()
+        checkNotNext()
     }
     
     
@@ -172,7 +191,63 @@ class ViewControllerV1: UIViewController {
         print(dictionary)
         self.addWordFieldFirst.text = ""
         self.addWordFieldSecond.text = ""
+        maxNumIndicator.text = String(dictionary.count)
     }
+    
+//    //Функция для проверки ответов
+//    func check() {
+//        if dictionary == [:] || textField.text == "" {
+//            wordLabel.text = "No"
+//            resultLabel.text = "Слов больше нет"
+//            textField.text = ""
+//            alert()
+//            numIndicator.text = "0"
+//
+//
+//
+//        } else if textField.text == checkValue || textField.text == checkValueSecond {
+//            resultLabel.text = "Верно"
+//            resultLabel.textColor = .green
+//
+//            if dictionary == [:]  {
+//                wordLabel.text = "No"
+//            } else {
+//                textField.text = ""
+//                print(dictionary)
+//                checkValue = ""
+//                checkValueSecond = ""
+//                let index: Int = Int(arc4random_uniform(UInt32(dictionary.count)))
+//                let randomKay = Array(dictionary.keys)[index]
+//                let randomVal = Array(dictionary.values)[index]
+//                dictionary[randomKay] = nil
+//                wordLabel.text = randomKay
+//                checkValueSecond = randomVal
+//                let test = indicatorLabel.text
+//                indicatorLabel.text = "\(test ?? "")🟢"
+//                let num: Int = Int(numIndicator.text!)! + 1
+//                numIndicator.text = String(num)
+//
+//            }
+//
+//        } else {
+//            resultLabel.text = "Не верно"
+//            resultLabel.textColor = .red
+//            checkValue = ""
+//            checkValueSecond  = ""
+//            let index: Int = Int(arc4random_uniform(UInt32(dictionary.count)))
+//            let randomKay = Array(dictionary.keys)[index]
+//            let randomVal = Array(dictionary.values)[index]
+//            dictionary[randomKay] = nil
+//            wordLabel.text = randomKay
+//            checkValueSecond = randomVal
+//            let test = indicatorLabel.text
+//            indicatorLabel.text = "\(test ?? "")🔴"
+//            let num: Int = Int(numIndicator.text!)! + 1
+//            numIndicator.text = String(num)
+//        }
+//
+//
+//    }
 }
 
 
