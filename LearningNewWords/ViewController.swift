@@ -30,13 +30,13 @@ class ViewController: UIViewController {
         let firstWord = String(self.addWordFieldFirst.text!)
         let secondWord = String(self.addWordFieldSecond.text!)
         self.dictionary[firstWord] = secondWord
-//        self.array.append(firstWord)
-//        self.wordLabel.text = addWordFieldFirst.text
+        //        self.array.append(firstWord)
+        //        self.wordLabel.text = addWordFieldFirst.text
         print(dictionary)
         self.addWordFieldFirst.text = ""
         self.addWordFieldSecond.text = ""
         
-//        print (dictionary[firstWord]!)
+        //        print (dictionary[firstWord]!)
     }
     
     
@@ -45,8 +45,8 @@ class ViewController: UIViewController {
         dictionary = ["Кот":"Cat", "Собака":"Dog","Рыба":"Fish"]
         for i in dictionary {
             print("key: \(i.key). Value: \(i.value)")
-
-//          CheckField.text = dictionary[]
+            
+            //          CheckField.text = dictionary[]
         }
     }
     
@@ -59,16 +59,20 @@ class ViewController: UIViewController {
         
     }
     
+    
+    
+    
     @IBOutlet weak var CheckField: UITextField!
     @IBOutlet weak var check: UILabel!
     @IBAction func checkButton(_ sender: Any) {
         
+        
         let checkWord: String = String (CheckField.text ?? "Нажмите Start")
-
-   
+        
+        
         for (key,value ) in dictionary  {
             if dictionary == [:] {
-               print("Выходим из массива")
+                print("Выходим из массива")
                 self.check.text = "Слов больше нет"
                 self.check.textColor = .black
                 break
@@ -80,7 +84,7 @@ class ViewController: UIViewController {
                     self.check.text = "Правильно"
                     self.check.textColor = UIColor.green
                     dictionary[key] = nil
-                  
+                    
                 } else if checkWord == "" {
                     self.check.text = "Введите перевод"
                     self.check.textColor = .blue
@@ -93,12 +97,22 @@ class ViewController: UIViewController {
             }
             
             
-        
-           
-          print(dictionary)
+            
+            
+            print(dictionary)
         }
         
     }
+    
+    
+    
+    //Тестирование обработчика ошибок
+    enum error: Error {
+        case checkNill
+        case checkError
+    }
+    
+   
 }
 
 
